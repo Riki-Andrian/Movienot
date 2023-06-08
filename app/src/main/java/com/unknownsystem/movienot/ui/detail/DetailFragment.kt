@@ -1,5 +1,9 @@
 package com.unknownsystem.movienot.ui.detail
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -66,7 +70,28 @@ class DetailFragment : Fragment() {
         val adapter = genres?.let { GenreAdapter(it) }
         binding.generesRecyclerview.adapter = adapter
         binding.backButton.setOnClickListener { closeFragment() }
+
+        binding.netflix.setOnClickListener {
+            openNetflix(result.title)
+        }
     }
+
+    private fun openNetflix(judul: String?){
+        val packageManager: PackageManager = requireActivity().packageManager
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.netflix.com/search?q=$judul"))
+        val resolveInfo: ResolveInfo? = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
+//       intent.setPackage("com.netflix.mediaclient")
+
+        if (resolveInfo != null){
+            startActivity(intent)
+        }else{
+            val intentPlayStore = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.netflix.mediaclient"))
+            startActivity(intentPlayStore)
+        }
+
+
+    }
+
 
     private fun closeFragment() {
         Navigation.findNavController(binding.root).popBackStack()
